@@ -27,7 +27,8 @@ SECRET_KEY = '6nfd5(=#4)x4(#kl9^cspq&fbx#8uf2vv)bgalxo8m7x(m3u=y'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+DOMAIN = 'localhost'
+ALLOWED_HOSTS = [DOMAIN]
 
 
 # Application definition
@@ -125,6 +126,12 @@ LOGGING = {
     },
     'loggers': {
         'django': {
+            'handlers': ['console'],
+        },
+        'accounts': {
+            'handlers': ['console'],
+        },
+        'lists': {
             'handlers': ['console'],
         },
     },
