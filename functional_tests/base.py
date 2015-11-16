@@ -1,10 +1,13 @@
+import sys
 import os
+import time
 from datetime import datetime
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
-import sys
+from selenium.common.exceptions import WebDriverException
 
+DEFAULT_WAIT = 5
 TEST_EMAIL = 'edith@mockmyid.com'
 SCREEN_DUMP_LOCATION = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), 'screendumps'
@@ -29,7 +32,7 @@ class FunctionalTest(StaticLiveServerTestCase):
     def setUp(self):
 ##        self.browser = webdriver.Firefox()
         self.browser = webdriver.Chrome('C:\\DevelopmentWorkarea\\drivers\\chromedriver.exe')
-        self.browser.implicitly_wait(1)
+        self.browser.implicitly_wait(DEFAULT_WAIT)
 
     def tearDown(self):
         if self._test_has_failed():
@@ -103,3 +106,14 @@ class FunctionalTest(StaticLiveServerTestCase):
             windowid=self._windowid,
             timestamp=timestamp
         )
+    
+    def wait_for(self, function_with_assertion, timeout=DEFAULT_WAIT):
+        start_time = time.time()
+        while time.time() - start_time < timeout:
+            try:
+                return function_with_assertion()
+            except (AssertionError, WebDriverException):
+                time.sleep(0.1)
+            # One more try, which will raise any errors if they are outstanding
+            return function_with_assertion()
+        
